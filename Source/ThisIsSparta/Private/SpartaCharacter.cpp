@@ -2,22 +2,19 @@
 #include "SpartaPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "Camera/CameraComponent.h"
-#include "DSP/DelayStereo.h"
-#include "DynamicMesh/MeshTransforms.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 ASpartaCharacter::ASpartaCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(FName("SpringArm"));
+	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArmComp->SetupAttachment(RootComponent);
 	SpringArmComp->TargetArmLength = 300.0f;
 	SpringArmComp->bUsePawnControlRotation = true;
 
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(FName("Camera"));
+	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
 	
