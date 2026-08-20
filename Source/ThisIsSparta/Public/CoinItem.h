@@ -4,7 +4,7 @@
 #include "BaseItem.h"
 #include "CoinItem.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class THISISSPARTA_API ACoinItem : public ABaseItem
 {
 	GENERATED_BODY()

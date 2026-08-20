@@ -13,7 +13,7 @@ class THISISSPARTA_API AMineItem : public ABaseItem
 	AMineItem();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MineItem")
-	USphereComponent* ExplosionCollision;
+	TObjectPtr<USphereComponent> ExplosionCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	float ExplosionDelay;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)

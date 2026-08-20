@@ -25,11 +25,6 @@ ASpartaCharacter::ASpartaCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 }
 
-void ASpartaCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
