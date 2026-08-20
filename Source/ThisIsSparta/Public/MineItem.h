@@ -12,12 +12,17 @@ class THISISSPARTA_API AMineItem : public ABaseItem
 	public:
 	AMineItem();
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "MineItem")
+	USphereComponent* ExplosionCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	float ExplosionDelay;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
 	float ExplosionRadius;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
-	float ExplosionDamage;
+	int32 ExplosionDamage;
+	
+	FTimerHandle ExplosionTimerHandle;
 	
 	virtual void ActivateItem(AActor* Activator) override;
+	void Explode();
 };

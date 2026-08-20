@@ -2,11 +2,14 @@
 
 AHealingItem::AHealingItem()
 {
-	HealAmount = 20.0f;
+	HealAmount = 20;
 	ItemType = "HealingItem";
 }
 
 void AHealingItem::ActivateItem(AActor* Activator)
 {
-	DestroyItem();
+	if (Activator && Activator->ActorHasTag(TEXT("Player")))
+	{
+		DestroyItem();
+	}
 }
