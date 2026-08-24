@@ -16,26 +16,44 @@ class THISISSPARTA_API ASpartaCharacter : public ACharacter
 public:
 	ASpartaCharacter();
 
+	UFUNCTION(Category = "Health")
+	float GetHealth() const;
+	UFUNCTION(Category = "Health")
+	void AddHealth(float Amount);
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
 	TObjectPtr<UCameraComponent> CameraComp;
+	
 
 protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual float TakeDamage(
+		float DamageAmount,
+		FDamageEvent const& DamageEvent,
+		AController* EventInstigator,
+		AActor* DamageCauser) override;
+	
 	UFUNCTION()
-	void Move(const FInputActionValue& IAValue);
+	void Move(const FInputActionValue& InputActionValue);
 	UFUNCTION()
-	void StartJump(const FInputActionValue& IAValue);
+	void StartJump(const FInputActionValue& InputActionValue);
 	UFUNCTION()
-	void EndJump(const FInputActionValue& IAValue);
+	void EndJump(const FInputActionValue& InputActionValue);
 	UFUNCTION()
-	void Look(const FInputActionValue& IAValue);
+	void Look(const FInputActionValue& InputActionValue);
 	UFUNCTION()
-	void StartSprint(const FInputActionValue& IAValue);
+	void StartSprint(const FInputActionValue& InputActionValue);
 	UFUNCTION()
-	void EndSprint(const FInputActionValue& IAValue);
+	void EndSprint(const FInputActionValue& InputActionValue);
+	
+	void OnDeath();
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	float MaxHealth;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	float Health;
 
 private:
 	float NormalSpeed;

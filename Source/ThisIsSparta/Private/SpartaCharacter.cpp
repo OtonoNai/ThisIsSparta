@@ -17,12 +17,25 @@ ASpartaCharacter::ASpartaCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
-	
+
 	NormalSpeed = 600.0f;
 	SprintSpeedMultiplier = 1.5f;
 	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
-	
+
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
+
+	MaxHealth = 100.0f;
+	Health = MaxHealth;
+}
+
+float ASpartaCharacter::GetHealth() const
+{
+	return Health;
+}
+
+void ASpartaCharacter::AddHealth(float Amount)
+{
+	Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
 }
 
 void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -79,15 +92,33 @@ void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 	}
 }
 
-void ASpartaCharacter::Move(const FInputActionValue& IAValue)
+float ASpartaCharacter::TakeDamage(
+	float DamageAmount,
+	FDamageEvent const& DamageEvent,
+	AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	
+	Health = FMath::Clamp(Health - DamageAmount, 0.0f, MaxHealth);
+	
+	if (Health <= 0.0f)
+	{
+		OnDeath();
+	}
+	
+	return ActualDamage;
+}
+
+void ASpartaCharacter::Move(const FInputActionValue& InputActionValue)
 {
 	if (!Controller)
 	{
 		return;
 	}
-	
-	const FVector2d MoveInput = IAValue.Get<FVector2d>();
-	
+
+	const FVector2d MoveInput = InputActionValue.Get<FVector2d>();
+
 	if (!FMath::IsNearlyZero(MoveInput.X))
 	{
 		AddMovementInput(GetActorForwardVector(), MoveInput.X);
@@ -98,31 +129,31 @@ void ASpartaCharacter::Move(const FInputActionValue& IAValue)
 	}
 }
 
-void ASpartaCharacter::StartJump(const FInputActionValue& IAValue)
+void ASpartaCharacter::StartJump(const FInputActionValue& InputActionValue)
 {
-	if (IAValue.Get<bool>())
+	if (InputActionValue.Get<bool>())
 	{
 		Jump();
 	}
 }
 
-void ASpartaCharacter::EndJump(const FInputActionValue& IAValue)
+void ASpartaCharacter::EndJump(const FInputActionValue& InputActionValue)
 {
-	if (!IAValue.Get<bool>())
+	if (!InputActionValue.Get<bool>())
 	{
 		StopJumping();
 	}
 }
 
-void ASpartaCharacter::Look(const FInputActionValue& IAValue)
+void ASpartaCharacter::Look(const FInputActionValue& InputActionValue)
 {
-	FVector2d LookInput = IAValue.Get<FVector2d>();
-	
+	FVector2d LookInput = InputActionValue.Get<FVector2d>();
+
 	AddControllerYawInput(LookInput.X);
 	AddControllerPitchInput(LookInput.Y);
 }
 
-void ASpartaCharacter::StartSprint(const FInputActionValue& IAValue)
+void ASpartaCharacter::StartSprint(const FInputActionValue& InputActionValue)
 {
 	if (GetCharacterMovement())
 	{
@@ -130,10 +161,15 @@ void ASpartaCharacter::StartSprint(const FInputActionValue& IAValue)
 	}
 }
 
-void ASpartaCharacter::EndSprint(const FInputActionValue& IAValue)
+void ASpartaCharacter::EndSprint(const FInputActionValue& InputActionValue)
 {
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 	}
+}
+
+void ASpartaCharacter::OnDeath()
+{
+	
 }

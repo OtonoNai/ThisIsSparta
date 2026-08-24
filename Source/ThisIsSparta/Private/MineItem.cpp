@@ -1,6 +1,8 @@
 #include "MineItem.h"
 
+#include "SpartaCharacter.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMineItem::AMineItem()
 {
@@ -31,9 +33,14 @@ void AMineItem::Explode()
 	
 	for (AActor* Actor : OverlappingActors)
 	{
-		if (Actor && Actor->ActorHasTag(TEXT("Player")))
+		if (Actor && Cast<ASpartaCharacter>(Actor))
 		{
-			
+			UGameplayStatics::ApplyDamage(
+				Actor,
+				ExplosionDamage,
+				nullptr,
+				this,
+				UDamageType::StaticClass());
 		}
 	}
 	
