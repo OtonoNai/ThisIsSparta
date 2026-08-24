@@ -26,29 +26,31 @@ FVector ASpawnVolume::GetRandomPoint() const
 		FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
 }
 
-void ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
+AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
 {
 	if (!ItemClass)
 	{
-		return;
+		return nullptr;
 	}
 	
-	GetWorld()->SpawnActor<AActor>(
+	return GetWorld()->SpawnActor<AActor>(
 		ItemClass,
 		GetRandomPoint(),
 		FRotator::ZeroRotator
 		);
 }
 
-void ASpawnVolume::SpawnRandomItem()
+AActor* ASpawnVolume::SpawnRandomItem()
 {
 	if (FItemSpawnRow* SelectedRow = GetRandomItem())
 	{
 		if (TObjectPtr<UClass> ActualClass = SelectedRow->ItemClass.Get())
 		{
-			SpawnItem(ActualClass);
+			return SpawnItem(ActualClass);
 		}
 	}
+	
+	return nullptr;
 }
 
 FItemSpawnRow* ASpawnVolume::GetRandomItem() const

@@ -4,6 +4,8 @@
 #include "GameFramework/GameState.h"
 #include "SpartaGameState.generated.h"
 
+struct FTimerHandle;
+
 UCLASS()
 class THISISSPARTA_API ASpartaGameState : public AGameState
 {
@@ -16,10 +18,30 @@ public:
 	int32 GetScore() const;
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	void AddScore(int32 Amount);
+	UFUNCTION(BlueprintCallable, Category = "Score")
+	void OnCoinCollected();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void StartLevel();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void OnLevelTimeUp();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void EndLevel();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void OnGameOver();
 	
 protected:
 	virtual void BeginPlay() override;
 	
 private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	TArray<TSoftObjectPtr<UWorld>> Levels;
+	FTimerHandle LevelTimerHandle;
 	int32 Score;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	int32 SpawnedCoinCount;
+	int32 CollectedCoinCount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	float LevelDuration;
+	int32 CurrentLevelIndex;
+	int32 MaxLevel;
 };
