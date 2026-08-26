@@ -5,6 +5,7 @@
 #include "SpartaGameState.generated.h"
 
 struct FTimerHandle;
+struct FNumberFormattingOptions;
 
 UCLASS()
 class THISISSPARTA_API ASpartaGameState : public AGameState
@@ -39,6 +40,7 @@ private:
 	TArray<TSoftObjectPtr<UWorld>> Levels;
 	FTimerHandle LevelTimerHandle;
 	FTimerHandle HUDTimerHandle;
+	FNumberFormattingOptions TimeFormat;
 	int32 Score;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	int32 SpawnedCoinCount;

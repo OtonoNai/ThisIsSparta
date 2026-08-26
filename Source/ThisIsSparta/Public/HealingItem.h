@@ -12,7 +12,7 @@ class THISISSPARTA_API AHealingItem : public ABaseItem
 	public:
 	AHealingItem();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	int32 HealAmount;
 	
 	virtual void ActivateItem(AActor* Activator) override;

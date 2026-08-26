@@ -32,13 +32,13 @@ protected:
 	virtual void DestroyItem();
 	virtual FName GetItemType() const override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Item)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	FName ItemType;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<USceneComponent> SceneComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<USphereComponent> Collision;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item|Component")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 };

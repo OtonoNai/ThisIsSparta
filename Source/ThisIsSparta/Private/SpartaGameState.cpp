@@ -16,6 +16,8 @@ ASpartaGameState::ASpartaGameState()
 	LevelDuration = 30.0f;
 	CurrentLevelIndex = 0;
 	MaxLevel = 3;
+	TimeFormat.MinimumFractionalDigits = 2;
+	TimeFormat.MaximumFractionalDigits = 2;
 }
 
 void ASpartaGameState::BeginPlay()
@@ -28,7 +30,7 @@ void ASpartaGameState::BeginPlay()
 		HUDTimerHandle,
 		this,
 		&ASpartaGameState::UpdateHUDWidget,
-		0.1f,
+		0.01f,
 		true);
 }
 
@@ -154,7 +156,7 @@ void ASpartaGameState::UpdateHUDWidget()
 				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
 				{
 					float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
-					TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), RemainingTime));
+					TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), FText::AsNumber(RemainingTime, &TimeFormat)));
 				}
 				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
 				{
