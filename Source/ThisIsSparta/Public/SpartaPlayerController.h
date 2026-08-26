@@ -14,6 +14,9 @@ class THISISSPARTA_API ASpartaPlayerController : public APlayerController
 
 public:
 	ASpartaPlayerController();
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	UUserWidget* GetHUDWidget() const;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -25,7 +28,11 @@ public:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
 	TObjectPtr<UInputAction> SprintAction;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UUserWidget> HUDWidgetInstance;
+	
 protected:
 	virtual void BeginPlay() override;
 };

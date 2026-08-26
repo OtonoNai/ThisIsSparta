@@ -28,6 +28,8 @@ public:
 	void EndLevel();
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	void OnGameOver();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	void UpdateHUDWidget();
 	
 protected:
 	virtual void BeginPlay() override;
@@ -36,6 +38,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	TArray<TSoftObjectPtr<UWorld>> Levels;
 	FTimerHandle LevelTimerHandle;
+	FTimerHandle HUDTimerHandle;
 	int32 Score;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	int32 SpawnedCoinCount;

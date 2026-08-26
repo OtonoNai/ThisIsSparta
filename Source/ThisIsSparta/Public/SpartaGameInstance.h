@@ -14,6 +14,8 @@ public:
 	
 	UFUNCTION(Category = "Level")
 	void AddToScore(int32 Amount);
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	int32 GetTotalScore();
 	UFUNCTION(Category = "Level")
 	void SetIndexToNextLevel(int32 InCurrentLevelIndex);
 	UFUNCTION(Category = "Level")

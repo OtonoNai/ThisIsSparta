@@ -2,7 +2,10 @@
 
 #include "CoinItem.h"
 #include "SpartaGameInstance.h"
+#include "SpartaPlayerController.h"
 #include "SpawnVolume.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
 ASpartaGameState::ASpartaGameState()
@@ -20,6 +23,13 @@ void ASpartaGameState::BeginPlay()
 	Super::BeginPlay();
 
 	StartLevel();
+
+	GetWorldTimerManager().SetTimer(
+		HUDTimerHandle,
+		this,
+		&ASpartaGameState::UpdateHUDWidget,
+		0.1f,
+		true);
 }
 
 int32 ASpartaGameState::GetScore() const
@@ -83,6 +93,8 @@ void ASpartaGameState::StartLevel()
 		}
 	}
 
+	UpdateHUDWidget();
+
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
 		this,
@@ -128,4 +140,37 @@ void ASpartaGameState::EndLevel()
 
 void ASpartaGameState::OnGameOver()
 {
+	UpdateHUDWidget();
+}
+
+void ASpartaGameState::UpdateHUDWidget()
+{
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
+		{
+			if (UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget())
+			{
+				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
+				{
+					float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
+					TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), RemainingTime));
+				}
+				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
+				{
+					if (UGameInstance* GameInstance = GetGameInstance())
+					{
+						USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance);
+
+						ScoreText->SetText(
+							FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
+					}
+				}
+				if (UTextBlock* LevelIndexText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Level"))))
+				{
+					LevelIndexText->SetText(FText::Format(INVTEXT("Level {0}"), CurrentLevelIndex + 1));
+				}
+			}
+		}
+	}
 }
