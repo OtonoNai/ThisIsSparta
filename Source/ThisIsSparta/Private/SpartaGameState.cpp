@@ -85,7 +85,7 @@ void ASpartaGameState::StartLevel()
 	TArray<AActor*> FoundVolumes;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), FoundVolumes);
 
-	const int32 ItemToSpawn = 40;
+	const int32 ItemToSpawn = 20;
 
 	for (int32 i = 0; i < ItemToSpawn; ++i)
 	{

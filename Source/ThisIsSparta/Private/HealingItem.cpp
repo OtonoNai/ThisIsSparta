@@ -10,6 +10,8 @@ AHealingItem::AHealingItem()
 
 void AHealingItem::ActivateItem(AActor* Activator)
 {
+	Super::ActivateItem(Activator);
+	
 	if (ASpartaCharacter* PlayerCharacter = Cast<ASpartaCharacter>(Activator))
 	{
 		PlayerCharacter->AddHealth(HealAmount);

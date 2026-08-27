@@ -3,6 +3,7 @@
 #include "SpartaCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystemComponent.h"
 
 AMineItem::AMineItem()
 {
@@ -19,15 +20,26 @@ AMineItem::AMineItem()
 
 void AMineItem::ActivateItem(AActor* Activator)
 {
+	if (bHasTriggered)
+	{
+		return;
+	}
+	
+	Super::ActivateItem(Activator);
+	
 	GetWorld()->GetTimerManager().SetTimer(ExplosionTimerHandle, 
 		this,
 		&AMineItem::Explode,
 		ExplosionDelay,
 		false);
+	
+	bHasTriggered = true;
 }
 
 void AMineItem::Explode()
 {
+	UParticleSystemComponent* Particle = nullptr;
+	
 	TArray<AActor*> OverlappingActors;
 	ExplosionCollision->GetOverlappingActors(OverlappingActors);
 	
@@ -42,6 +54,38 @@ void AMineItem::Explode()
 				this,
 				UDamageType::StaticClass());
 		}
+	}
+	
+	if (ExplosionParticle)
+	{
+		Particle = UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			ExplosionParticle,
+			GetActorLocation(),
+			GetActorRotation(),
+			false);
+	}
+			
+	if (ExplosionSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			ExplosionSound,
+			GetActorLocation());
+	}
+	
+	if (Particle)
+	{
+		FTimerHandle ParticleTimerHandle;
+		
+		GetWorld()->GetTimerManager().SetTimer(
+			ParticleTimerHandle,
+			[Particle]()
+			{
+				Particle->DestroyComponent();
+			},
+			2.0f,
+			false);
 	}
 	
 	Destroy();
