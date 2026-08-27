@@ -113,7 +113,8 @@ void ASpartaGameState::StartLevel()
 
 void ASpartaGameState::OnLevelTimeUp()
 {
-	EndLevel();
+	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
+	OnGameOver();
 }
 
 void ASpartaGameState::EndLevel()
@@ -148,10 +149,13 @@ void ASpartaGameState::EndLevel()
 
 void ASpartaGameState::OnGameOver()
 {
+	GetWorldTimerManager().ClearTimer(HUDTimerHandle);
+	
 	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
 	{
 		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
 		{
+			SpartaPlayerController->SetPause(true);
 			SpartaPlayerController->ShowMainMenu(true);
 		}
 	}

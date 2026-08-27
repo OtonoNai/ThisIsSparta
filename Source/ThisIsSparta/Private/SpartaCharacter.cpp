@@ -1,7 +1,10 @@
 #include "SpartaCharacter.h"
 #include "SpartaPlayerController.h"
 #include "EnhancedInputComponent.h"
+#include "SpartaGameState.h"
 #include "Camera/CameraComponent.h"
+#include "Components/TextBlock.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -17,7 +20,13 @@ ASpartaCharacter::ASpartaCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
+	
+	OverheadHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
+	OverheadHP->SetupAttachment(GetMesh());
+	OverheadHP->SetWidgetSpace(EWidgetSpace::Screen);
 
+	HealthUIFormat.MinimumFractionalDigits = 0;
+	HealthUIFormat.MaximumFractionalDigits = 0;
 	NormalSpeed = 600.0f;
 	SprintSpeedMultiplier = 1.5f;
 	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
@@ -36,6 +45,13 @@ float ASpartaCharacter::GetHealth() const
 void ASpartaCharacter::AddHealth(float Amount)
 {
 	Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
+	UpdateOverheadHP();
+}
+
+void ASpartaCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+	UpdateOverheadHP();
 }
 
 void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -107,6 +123,8 @@ float ASpartaCharacter::TakeDamage(
 		OnDeath();
 	}
 	
+	UpdateOverheadHP();
+	
 	return ActualDamage;
 }
 
@@ -171,5 +189,32 @@ void ASpartaCharacter::EndSprint(const FInputActionValue& InputActionValue)
 
 void ASpartaCharacter::OnDeath()
 {
+	ASpartaGameState* SpartaGameState = GetWorld() ? GetWorld()->GetGameState<ASpartaGameState>() : nullptr;
+	if (SpartaGameState)
+	{
+		SpartaGameState->OnGameOver();
+	}
+}
+
+void ASpartaCharacter::UpdateOverheadHP()
+{
+	if (!OverheadHP)
+	{
+		return;
+	}
 	
+	UUserWidget* OverheadHPInstance = OverheadHP->GetUserWidgetObject();
+	if (!OverheadHPInstance)
+	{
+		return;
+	}
+	
+	if (UTextBlock* HPText = Cast<UTextBlock>(OverheadHPInstance->GetWidgetFromName(TEXT("HPValue"))))
+	{
+		HPText->SetText(
+			FText::Format(
+				INVTEXT("{0} / {1}"),
+					FText::AsNumber(Health, &HealthUIFormat),
+					FText::AsNumber(MaxHealth, &HealthUIFormat)));
+	}
 }

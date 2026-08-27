@@ -4,6 +4,7 @@
 #include "GameFramework/Character.h"
 #include "SpartaCharacter.generated.h"
 
+class UWidgetComponent;
 class USpringArmComponent;
 class UCameraComponent;
 struct FInputActionValue;
@@ -25,9 +26,12 @@ public:
 	TObjectPtr<USpringArmComponent> SpringArmComp;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	TObjectPtr<UCameraComponent> CameraComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> OverheadHP;
 	
 
 protected:
+	virtual void BeginPlay() override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual float TakeDamage(
 		float DamageAmount,
@@ -49,6 +53,7 @@ protected:
 	void EndSprint(const FInputActionValue& InputActionValue);
 	
 	void OnDeath();
+	void UpdateOverheadHP();
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
 	float MaxHealth;
@@ -56,6 +61,7 @@ protected:
 	float Health;
 
 private:
+	FNumberFormattingOptions HealthUIFormat;
 	float NormalSpeed;
 	float SprintSpeedMultiplier;
 	float SprintSpeed;
