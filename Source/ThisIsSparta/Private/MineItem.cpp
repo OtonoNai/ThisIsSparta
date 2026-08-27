@@ -11,7 +11,7 @@ AMineItem::AMineItem()
 	ExplosionDelay = 3.0f;
 	ExplosionRadius = 300.0f;
 	ExplosionDamage = 40;
-	
+
 	ExplosionCollision = CreateDefaultSubobject<USphereComponent>(TEXT("ExplosionCollision"));
 	ExplosionCollision->InitSphereRadius(ExplosionRadius);
 	ExplosionCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
@@ -24,25 +24,25 @@ void AMineItem::ActivateItem(AActor* Activator)
 	{
 		return;
 	}
-	
+
 	Super::ActivateItem(Activator);
-	
-	GetWorld()->GetTimerManager().SetTimer(ExplosionTimerHandle, 
-		this,
-		&AMineItem::Explode,
-		ExplosionDelay,
-		false);
-	
+
+	GetWorld()->GetTimerManager().SetTimer(ExplosionTimerHandle,
+	                                       this,
+	                                       &AMineItem::Explode,
+	                                       ExplosionDelay,
+	                                       false);
+
 	bHasTriggered = true;
 }
 
 void AMineItem::Explode()
 {
 	UParticleSystemComponent* Particle = nullptr;
-	
+
 	TArray<AActor*> OverlappingActors;
 	ExplosionCollision->GetOverlappingActors(OverlappingActors);
-	
+
 	for (AActor* Actor : OverlappingActors)
 	{
 		if (Actor && Cast<ASpartaCharacter>(Actor))
@@ -55,7 +55,7 @@ void AMineItem::Explode()
 				UDamageType::StaticClass());
 		}
 	}
-	
+
 	if (ExplosionParticle)
 	{
 		Particle = UGameplayStatics::SpawnEmitterAtLocation(
@@ -65,7 +65,7 @@ void AMineItem::Explode()
 			GetActorRotation(),
 			false);
 	}
-			
+
 	if (ExplosionSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
@@ -73,20 +73,24 @@ void AMineItem::Explode()
 			ExplosionSound,
 			GetActorLocation());
 	}
-	
+
 	if (Particle)
 	{
+		TWeakObjectPtr<UParticleSystemComponent> WeakParticle = Particle;
 		FTimerHandle ParticleTimerHandle;
-		
+
 		GetWorld()->GetTimerManager().SetTimer(
 			ParticleTimerHandle,
-			[Particle]()
+			[WeakParticle]()
 			{
-				Particle->DestroyComponent();
+				if (WeakParticle.IsValid())
+				{
+					WeakParticle->DestroyComponent();
+				}
 			},
 			2.0f,
 			false);
 	}
-	
+
 	Destroy();
 }

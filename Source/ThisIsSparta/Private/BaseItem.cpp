@@ -46,7 +46,7 @@ void ABaseItem::OnItemEndOverlap(
 void ABaseItem::ActivateItem(AActor* Activator)
 {
 	UParticleSystemComponent* Particle = nullptr;
-	
+
 	if (PickupParticle)
 	{
 		Particle = UGameplayStatics::SpawnEmitterAtLocation(
@@ -54,9 +54,9 @@ void ABaseItem::ActivateItem(AActor* Activator)
 			PickupParticle,
 			GetActorLocation(),
 			GetActorRotation(),
-			true);
+			false);
 	}
-	
+
 	if (PickupSound)
 	{
 		UGameplayStatics::PlaySoundAtLocation(
@@ -65,16 +65,20 @@ void ABaseItem::ActivateItem(AActor* Activator)
 			GetActorLocation(),
 			GetActorRotation());
 	}
-	
+
 	if (Particle)
 	{
+		TWeakObjectPtr<UParticleSystemComponent> WeakParticle = Particle;
 		FTimerHandle ParticleTimerHandle;
-		
+
 		GetWorld()->GetTimerManager().SetTimer(
 			ParticleTimerHandle,
-			[Particle]()
+			[WeakParticle]()
 			{
-				Particle->DestroyComponent();
+				if (WeakParticle.IsValid())
+				{
+					WeakParticle->DestroyComponent();
+				}
 			},
 			2.0f,
 			false);
