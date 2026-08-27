@@ -17,6 +17,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowGameHUD();
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void ShowMainMenu(bool bIsRestart);
+	UFUNCTION(BlueprintCallable, Category = "UI")
+	void StartGame();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
@@ -32,6 +38,10 @@ public:
 	TSubclassOf<UUserWidget> HUDWidgetClass;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UUserWidget> HUDWidgetInstance;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UUserWidget> MainMenuWidgetInstance;
 	
 protected:
 	virtual void BeginPlay() override;

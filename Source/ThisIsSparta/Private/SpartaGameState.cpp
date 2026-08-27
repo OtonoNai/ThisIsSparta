@@ -63,6 +63,14 @@ void ASpartaGameState::OnCoinCollected()
 
 void ASpartaGameState::StartLevel()
 {
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
+		{
+			SpartaPlayerController->ShowGameHUD();
+		}
+	}
+	
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
@@ -94,9 +102,7 @@ void ASpartaGameState::StartLevel()
 			}
 		}
 	}
-
-	UpdateHUDWidget();
-
+	
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
 		this,
@@ -142,7 +148,13 @@ void ASpartaGameState::EndLevel()
 
 void ASpartaGameState::OnGameOver()
 {
-	UpdateHUDWidget();
+	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	{
+		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
+		{
+			SpartaPlayerController->ShowMainMenu(true);
+		}
+	}
 }
 
 void ASpartaGameState::UpdateHUDWidget()
@@ -176,3 +188,10 @@ void ASpartaGameState::UpdateHUDWidget()
 		}
 	}
 }
+
+TSoftObjectPtr<UWorld> ASpartaGameState::GetFirstLevel() const
+{
+	return Levels[0];
+}
+
+

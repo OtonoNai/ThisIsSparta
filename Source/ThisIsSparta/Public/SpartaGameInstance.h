@@ -13,6 +13,8 @@ public:
 	USpartaGameInstance();
 	
 	UFUNCTION(Category = "Level")
+	void InitializeGameData();
+	UFUNCTION(Category = "Level")
 	void AddToScore(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	int32 GetTotalScore();

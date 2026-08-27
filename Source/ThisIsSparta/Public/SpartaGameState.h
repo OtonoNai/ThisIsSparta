@@ -31,6 +31,8 @@ public:
 	void OnGameOver();
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	void UpdateHUDWidget();
+	UFUNCTION(BlueprintCallable, Category = "Level")
+	TSoftObjectPtr<UWorld> GetFirstLevel() const;
 	
 protected:
 	virtual void BeginPlay() override;

@@ -6,6 +6,12 @@ USpartaGameInstance::USpartaGameInstance()
 	CurrentLevelIndex = 0;
 }
 
+void USpartaGameInstance::InitializeGameData()
+{
+	CurrentLevelIndex = 0;
+	TotalScore = 0;
+}
+
 void USpartaGameInstance::AddToScore(int32 Amount)
 {
 	TotalScore += Amount;
