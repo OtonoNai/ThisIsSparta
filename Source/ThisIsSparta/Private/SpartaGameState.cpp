@@ -70,7 +70,7 @@ void ASpartaGameState::StartLevel()
 			SpartaPlayerController->ShowGameHUD();
 		}
 	}
-	
+
 	if (UGameInstance* GameInstance = GetGameInstance())
 	{
 		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
@@ -102,7 +102,7 @@ void ASpartaGameState::StartLevel()
 			}
 		}
 	}
-	
+
 	GetWorldTimerManager().SetTimer(
 		LevelTimerHandle,
 		this,
@@ -159,32 +159,36 @@ void ASpartaGameState::OnGameOver()
 
 void ASpartaGameState::UpdateHUDWidget()
 {
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-	{
-		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
-		{
-			if (UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget())
-			{
-				if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
-				{
-					float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
-					TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), FText::AsNumber(RemainingTime, &TimeFormat)));
-				}
-				if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
-				{
-					if (UGameInstance* GameInstance = GetGameInstance())
-					{
-						USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance);
+	ASpartaPlayerController* SpartaPlayerController =
+		Cast<ASpartaPlayerController>(GetWorld()->GetFirstPlayerController());
 
-						ScoreText->SetText(
-							FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
-					}
-				}
-				if (UTextBlock* LevelIndexText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Level"))))
-				{
-					LevelIndexText->SetText(FText::Format(INVTEXT("Level {0}"), CurrentLevelIndex + 1));
-				}
-			}
+	if (!SpartaPlayerController)
+	{
+		return;
+	}
+
+	UUserWidget* HUDWidget = SpartaPlayerController->GetHUDWidget();
+
+	if (!HUDWidget)
+	{
+		return;
+	}
+
+	if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
+	{
+		float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
+		TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), FText::AsNumber(RemainingTime, &TimeFormat)));
+	}
+	if (UTextBlock* LevelIndexText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Level"))))
+	{
+		LevelIndexText->SetText(FText::Format(INVTEXT("Level {0}"), CurrentLevelIndex + 1));
+	}
+	if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
+	{
+		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GetGameInstance()))
+		{
+			ScoreText->SetText(
+				FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
 		}
 	}
 }
@@ -193,5 +197,3 @@ TSoftObjectPtr<UWorld> ASpartaGameState::GetFirstLevel() const
 {
 	return Levels[0];
 }
-
-
