@@ -2,11 +2,13 @@
 #include "SpartaPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "SpartaGameState.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ASpartaCharacter::ASpartaCharacter()
 {
@@ -20,7 +22,7 @@ ASpartaCharacter::ASpartaCharacter()
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
 	CameraComp->bUsePawnControlRotation = false;
-	
+
 	OverheadHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
 	OverheadHP->SetupAttachment(GetMesh());
 	OverheadHP->SetWidgetSpace(EWidgetSpace::Screen);
@@ -115,16 +117,16 @@ float ASpartaCharacter::TakeDamage(
 	AActor* DamageCauser)
 {
 	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	
-	Health = FMath::Clamp(Health - DamageAmount, 0.0f, MaxHealth);
-	
+
+	Health = FMath::Clamp(Health - ActualDamage, 0.0f, MaxHealth);
+
 	if (Health <= 0.0f)
 	{
 		OnDeath();
 	}
-	
+
 	UpdateOverheadHP();
-	
+
 	return ActualDamage;
 }
 
@@ -208,13 +210,13 @@ void ASpartaCharacter::UpdateOverheadHP()
 	{
 		return;
 	}
-	
+
 	if (UTextBlock* HPText = Cast<UTextBlock>(OverheadHPInstance->GetWidgetFromName(TEXT("HPValue"))))
 	{
 		HPText->SetText(
 			FText::Format(
 				INVTEXT("{0} / {1}"),
-					FText::AsNumber(Health, &HealthUIFormat),
-					FText::AsNumber(MaxHealth, &HealthUIFormat)));
+				FText::AsNumber(Health, &HealthUIFormat),
+				FText::AsNumber(MaxHealth, &HealthUIFormat)));
 	}
 }

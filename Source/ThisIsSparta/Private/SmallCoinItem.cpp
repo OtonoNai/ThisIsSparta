@@ -3,7 +3,7 @@
 ASmallCoinItem::ASmallCoinItem()
 {
 	PointValue = 10;
-	ItemType = "SmallCoin";
+	ItemType = TEXT("SmallCoin");
 }
 
 void ASmallCoinItem::ActivateItem(AActor* Activator)

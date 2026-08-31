@@ -4,17 +4,14 @@
 #include "GameFramework/GameState.h"
 #include "SpartaGameState.generated.h"
 
-struct FTimerHandle;
-struct FNumberFormattingOptions;
-
 UCLASS()
 class THISISSPARTA_API ASpartaGameState : public AGameState
 {
 	GENERATED_BODY()
-	
+
 public:
 	ASpartaGameState();
-	
+
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	int32 GetScore() const;
 	UFUNCTION(BlueprintCallable, Category = "Score")
@@ -33,10 +30,13 @@ public:
 	void UpdateHUDWidget();
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	TSoftObjectPtr<UWorld> GetFirstLevel() const;
-	
+
+	void StartWave();
+	void EndWave();
+
 protected:
 	virtual void BeginPlay() override;
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	TArray<TSoftObjectPtr<UWorld>> Levels;
@@ -51,4 +51,6 @@ private:
 	float LevelDuration;
 	int32 CurrentLevelIndex;
 	int32 MaxLevel;
+	int32 MaxWaveCount = 0;
+	int32 CurrentWaveCount = 0;
 };

@@ -1,17 +1,18 @@
 #include "SpawnVolume.h"
 
+#include "LevelWaveRow.h"
 #include "Components/BoxComponent.h"
 
 ASpawnVolume::ASpawnVolume()
 {
 	PrimaryActorTick.bCanEverTick = false;
-	
+
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	SetRootComponent(Scene);
-	
+
 	SpawnVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnVolume"));
 	SpawnVolume->SetupAttachment(Scene);
-	
+
 	ItemDataTable = nullptr;
 }
 
@@ -19,11 +20,58 @@ FVector ASpawnVolume::GetRandomPoint() const
 {
 	FVector BoxExtent = SpawnVolume->GetScaledBoxExtent();
 	FVector BoxOrigin = SpawnVolume->GetComponentLocation();
-	
+
 	return BoxOrigin + FVector(
-		FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
-		FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y),
-		FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
+		       FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
+		       FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y),
+		       FMath::FRandRange(-BoxExtent.Z, BoxExtent.Z));
+}
+
+int32 ASpawnVolume::GetWaveCount() const
+{
+	if (!WaveDataTable)
+	{
+		return 0;
+	}
+
+	TArray<FLevelWaveRow*> AllRows;
+	static const FString ContextString(TEXT("LevelWaveContext"));
+	WaveDataTable->GetAllRows(ContextString, AllRows);
+
+	return AllRows.Num();
+}
+
+int32 ASpawnVolume::GetWaveTime(int32 Index) const
+{
+	const FLevelWaveRow* Row = GetWaveRow(Index);
+
+	return Row ? Row->WaveTime : 0;
+}
+
+int32 ASpawnVolume::GetWaveSpawnItemCount(int32 Index) const
+{
+	const FLevelWaveRow* Row = GetWaveRow(Index);
+
+	return Row ? Row->SpawnItemCount : 0;
+}
+
+const FLevelWaveRow* ASpawnVolume::GetWaveRow(int32 Index) const
+{
+	if (!WaveDataTable)
+	{
+		return nullptr;
+	}
+
+	TArray<FLevelWaveRow*> AllRows;
+	static const FString ContextString(TEXT("LevelWaveContext"));
+	WaveDataTable->GetAllRows(ContextString, AllRows);
+
+	if (!AllRows.IsValidIndex(Index))
+	{
+		return nullptr;
+	}
+
+	return AllRows[Index];
 }
 
 AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
@@ -32,7 +80,7 @@ AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
 	{
 		return nullptr;
 	}
-	
+
 	return GetWorld()->SpawnActor<AActor>(
 		ItemClass,
 		GetRandomPoint(),
@@ -44,12 +92,12 @@ AActor* ASpawnVolume::SpawnRandomItem()
 {
 	if (FItemSpawnRow* SelectedRow = GetRandomItem())
 	{
-		if (TObjectPtr<UClass> ActualClass = SelectedRow->ItemClass.Get())
+		if (UClass* ActualClass = SelectedRow->ItemClass.Get())
 		{
 			return SpawnItem(ActualClass);
 		}
 	}
-	
+
 	return nullptr;
 }
 
@@ -59,16 +107,16 @@ FItemSpawnRow* ASpawnVolume::GetRandomItem() const
 	{
 		return nullptr;
 	}
-	
+
 	TArray<FItemSpawnRow*> AllRows;
 	static const FString ContextString(TEXT("ItemSpawnContext"));
 	ItemDataTable->GetAllRows(ContextString, AllRows);
-	
+
 	if (AllRows.IsEmpty())
 	{
 		return nullptr;
 	}
-	
+
 	float TotalChance = 0.0f;
 	for (const FItemSpawnRow* Row : AllRows)
 	{
@@ -87,6 +135,6 @@ FItemSpawnRow* ASpawnVolume::GetRandomItem() const
 			return Row;
 		}
 	}
-	
+
 	return nullptr;
 }

@@ -13,7 +13,7 @@ ACoinItem::ACoinItem()
 void ACoinItem::ActivateItem(AActor* Activator)
 {
 	Super::ActivateItem(Activator);
-	
+
 	if (Cast<ASpartaCharacter>(Activator))
 	{
 		if (UWorld* World = GetWorld())

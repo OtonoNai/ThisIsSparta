@@ -14,7 +14,7 @@ class THISISSPARTA_API ASpartaPlayerController : public APlayerController
 
 public:
 	ASpartaPlayerController();
-	
+
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -36,13 +36,13 @@ public:
 	TObjectPtr<UInputAction> SprintAction;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UUserWidget> HUDWidgetInstance;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
 	TSubclassOf<UUserWidget> MainMenuWidgetClass;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
 	TObjectPtr<UUserWidget> MainMenuWidgetInstance;
-	
+
 protected:
 	virtual void BeginPlay() override;
 };

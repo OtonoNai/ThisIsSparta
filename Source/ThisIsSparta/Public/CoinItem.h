@@ -11,10 +11,10 @@ class THISISSPARTA_API ACoinItem : public ABaseItem
 
 public:
 	ACoinItem();
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	int32 PointValue;
 	
 	virtual void ActivateItem(AActor* Activator) override;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	int32 PointValue;
 };

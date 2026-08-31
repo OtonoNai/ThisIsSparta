@@ -8,7 +8,7 @@ UCLASS()
 class THISISSPARTA_API ASpartaGameMode : public AGameMode
 {
 	GENERATED_BODY()
-	
+
 public:
 	ASpartaGameMode();
 };

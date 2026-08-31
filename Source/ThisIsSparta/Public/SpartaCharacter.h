@@ -7,7 +7,6 @@
 class UWidgetComponent;
 class USpringArmComponent;
 class UCameraComponent;
-struct FInputActionValue;
 
 UCLASS()
 class THISISSPARTA_API ASpartaCharacter : public ACharacter
@@ -21,14 +20,6 @@ public:
 	float GetHealth() const;
 	UFUNCTION(Category = "Health")
 	void AddHealth(float Amount);
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<USpringArmComponent> SpringArmComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<UCameraComponent> CameraComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UWidgetComponent> OverheadHP;
-	
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,7 +29,7 @@ protected:
 		FDamageEvent const& DamageEvent,
 		AController* EventInstigator,
 		AActor* DamageCauser) override;
-	
+
 	UFUNCTION()
 	void Move(const FInputActionValue& InputActionValue);
 	UFUNCTION()
@@ -51,18 +42,27 @@ protected:
 	void StartSprint(const FInputActionValue& InputActionValue);
 	UFUNCTION()
 	void EndSprint(const FInputActionValue& InputActionValue);
-	
-	void OnDeath();
-	void UpdateOverheadHP();
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	TObjectPtr<USpringArmComponent> SpringArmComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	TObjectPtr<UCameraComponent> CameraComp;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> OverheadHP;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float MaxHealth;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Health")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
 	float Health;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
+	float NormalSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
+	float SprintSpeedMultiplier;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
+	float SprintSpeed;
 
 private:
+	void UpdateOverheadHP();
+	void OnDeath();
+
 	FNumberFormattingOptions HealthUIFormat;
-	float NormalSpeed;
-	float SprintSpeedMultiplier;
-	float SprintSpeed;
 };

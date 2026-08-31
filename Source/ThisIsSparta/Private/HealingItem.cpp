@@ -5,17 +5,17 @@
 AHealingItem::AHealingItem()
 {
 	HealAmount = 20;
-	ItemType = "HealingItem";
+	ItemType = TEXT("HealingItem");
 }
 
 void AHealingItem::ActivateItem(AActor* Activator)
 {
 	Super::ActivateItem(Activator);
-	
+
 	if (ASpartaCharacter* PlayerCharacter = Cast<ASpartaCharacter>(Activator))
 	{
 		PlayerCharacter->AddHealth(HealAmount);
-		
+
 		DestroyItem();
 	}
 }

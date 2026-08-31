@@ -8,12 +8,13 @@ UCLASS()
 class THISISSPARTA_API AHealingItem : public ABaseItem
 {
 	GENERATED_BODY()
-	
-	public:
+
+public:
 	AHealingItem();
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	int32 HealAmount;
-	
+
 	virtual void ActivateItem(AActor* Activator) override;
+	
+protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	int32 HealAmount;
 };

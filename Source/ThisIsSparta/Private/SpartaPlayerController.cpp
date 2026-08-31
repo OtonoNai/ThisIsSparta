@@ -26,7 +26,6 @@ void ASpartaPlayerController::ShowGameHUD()
 	{
 		HUDWidgetInstance->RemoveFromParent();
 		HUDWidgetInstance = nullptr;
-
 	}
 	if (MainMenuWidgetInstance)
 	{
@@ -45,7 +44,10 @@ void ASpartaPlayerController::ShowGameHUD()
 			SetInputMode(FInputModeGameOnly());
 		}
 
-		Cast<ASpartaGameState>(GetWorld()->GetGameState<ASpartaGameState>())->UpdateHUDWidget();
+		if (ASpartaGameState* SpartaGameState = GetWorld()->GetGameState<ASpartaGameState>())
+		{
+			SpartaGameState->UpdateHUDWidget();
+		}
 	}
 }
 
@@ -76,11 +78,9 @@ void ASpartaPlayerController::ShowMainMenu(bool bIsRestart)
 
 		if (UTextBlock* ButtonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName("Start")))
 		{
-			bIsRestart ?
-			ButtonText->SetText(FText::FromString(TEXT("Restart")))
-			: ButtonText->SetText(FText::FromString(TEXT("Start")));
+			ButtonText->SetText(FText::FromString(bIsRestart ? TEXT("Restart") : TEXT("Start")));
 		}
-		
+
 		if (bIsRestart)
 		{
 			UFunction* PlayAnimFunction = MainMenuWidgetInstance->FindFunction(FName(TEXT("PlayGameOverAnim")));
@@ -88,7 +88,7 @@ void ASpartaPlayerController::ShowMainMenu(bool bIsRestart)
 			{
 				MainMenuWidgetInstance->ProcessEvent(PlayAnimFunction, nullptr);
 			}
-			
+
 			if (UTextBlock* TotalScoreText =
 				Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("TotalScore"))))
 			{
@@ -99,7 +99,6 @@ void ASpartaPlayerController::ShowMainMenu(bool bIsRestart)
 						FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
 				}
 			}
-			
 		}
 	}
 }
@@ -115,7 +114,7 @@ void ASpartaPlayerController::StartGame()
 	{
 		UGameplayStatics::OpenLevelBySoftObjectPtr(this, SpartaGameState->GetFirstLevel());
 	}
-	
+
 	SetPause(false);
 }
 

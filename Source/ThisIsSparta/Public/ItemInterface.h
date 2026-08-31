@@ -4,7 +4,6 @@
 #include "UObject/Interface.h"
 #include "ItemInterface.generated.h"
 
-// This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UItemInterface : public UInterface
 {
@@ -16,7 +15,6 @@ class THISISSPARTA_API IItemInterface
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,
@@ -24,7 +22,6 @@ public:
 		int32 OtherBodyIndex,
 		bool bFromSweep,
 		const FHitResult& SweepResult) = 0;
-	UFUNCTION()
 	virtual void OnItemEndOverlap(
 		UPrimitiveComponent* OverlappedComponent,
 		AActor* OtherActor,

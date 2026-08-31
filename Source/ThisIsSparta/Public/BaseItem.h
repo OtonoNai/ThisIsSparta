@@ -11,27 +11,29 @@ UCLASS(Abstract)
 class THISISSPARTA_API ABaseItem : public AActor, public IItemInterface
 {
 	GENERATED_BODY()
-	
-public:	
-	ABaseItem();
 
-protected:
+public:
+	ABaseItem();
+	
+	UFUNCTION()
 	virtual void OnItemOverlap(
-	UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComponent,
-	int32 OtherBodyIndex,
-	bool bFromSweep,
-	const FHitResult& SweepResult) override;
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex,
+		bool bFromSweep,
+		const FHitResult& SweepResult) override;
+	UFUNCTION()
 	virtual void OnItemEndOverlap(
-	UPrimitiveComponent* OverlappedComponent,
-	AActor* OtherActor,
-	UPrimitiveComponent* OtherComponent,
-	int32 OtherBodyIndex) override;
+		UPrimitiveComponent* OverlappedComponent,
+		AActor* OtherActor,
+		UPrimitiveComponent* OtherComponent,
+		int32 OtherBodyIndex) override;
 	virtual void ActivateItem(AActor* Activator) override;
 	virtual void DestroyItem();
 	virtual FName GetItemType() const override;
-	
+
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<USceneComponent> SceneComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
@@ -42,6 +44,6 @@ protected:
 	TObjectPtr<UParticleSystem> PickupParticle;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<USoundBase> PickupSound;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	FName ItemType;
 };

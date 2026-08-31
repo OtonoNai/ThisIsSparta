@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -8,7 +7,7 @@ USTRUCT(BlueprintType)
 struct THISISSPARTA_API FItemSpawnRow : public FTableRowBase
 {
 	GENERATED_BODY()
-	
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;

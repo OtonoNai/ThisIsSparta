@@ -8,10 +8,10 @@ UCLASS()
 class THISISSPARTA_API USpartaGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	USpartaGameInstance();
-	
+
 	UFUNCTION(Category = "Level")
 	void InitializeGameData();
 	UFUNCTION(Category = "Level")
@@ -22,7 +22,7 @@ public:
 	void SetIndexToNextLevel(int32 InCurrentLevelIndex);
 	UFUNCTION(Category = "Level")
 	int32 GetCurrentLevelIndex();
-	
+
 private:
 	int32 TotalScore;
 	int32 CurrentLevelIndex;
