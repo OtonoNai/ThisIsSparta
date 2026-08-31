@@ -1,6 +1,7 @@
 #include "SpartaGameState.h"
 
 #include "CoinItem.h"
+#include "SmallCoinItem.h"
 #include "SpartaGameInstance.h"
 #include "SpartaPlayerController.h"
 #include "SpawnVolume.h"
@@ -189,7 +190,7 @@ void ASpartaGameState::UpdateHUDWidget()
 
 TSoftObjectPtr<UWorld> ASpartaGameState::GetFirstLevel() const
 {
-	return Levels[0];
+	return Levels.IsValidIndex(0) ? Levels[0] : nullptr;
 }
 
 void ASpartaGameState::StartWave()
@@ -223,6 +224,16 @@ void ASpartaGameState::StartWave()
 			++SpawnedCoinCount;
 		}
 	}
+	
+	if (SpawnedCoinCount == 0)
+    	{
+    		AActor* ForcedCoin = SpawnVolume->SpawnItem(ASmallCoinItem::StaticClass());
+    
+    		if (ForcedCoin)
+    		{
+    			++SpawnedCoinCount;
+    		}
+    	}
 
 	const int32 WaveTime = SpawnVolume->GetWaveTime(CurrentWaveCount);
 
