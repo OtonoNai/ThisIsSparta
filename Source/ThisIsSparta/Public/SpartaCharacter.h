@@ -17,21 +17,13 @@ class THISISSPARTA_API ASpartaCharacter : public ACharacter
 public:
 	ASpartaCharacter();
 
-	UFUNCTION()
 	void Move(const FInputActionValue& InputActionValue);
-	UFUNCTION()
 	void StartJump(const FInputActionValue& InputActionValue);
-	UFUNCTION()
 	void EndJump(const FInputActionValue& InputActionValue);
-	UFUNCTION()
 	void Look(const FInputActionValue& InputActionValue);
-	UFUNCTION()
 	void StartSprint(const FInputActionValue& InputActionValue);
-	UFUNCTION()
 	void EndSprint(const FInputActionValue& InputActionValue);
-	UFUNCTION(Category = "Health")
 	float GetHealth() const;
-	UFUNCTION(Category = "Health")
 	void AddHealth(float Amount);
 
 protected:
@@ -48,7 +40,7 @@ private:
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> CameraComponent;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UWidgetComponent> OverheadHealth;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
 	float MaxHealth;

@@ -8,6 +8,7 @@ struct THISISSPARTA_API FLevelWaveRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 WaveTime = 0;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

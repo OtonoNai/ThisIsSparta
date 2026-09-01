@@ -12,15 +12,12 @@ class THISISSPARTA_API USpartaGameInstance : public UGameInstance
 public:
 	USpartaGameInstance();
 
-	UFUNCTION(Category = "Level")
-	void InitializeGameData();
-	UFUNCTION(Category = "Level")
-	void AddToScore(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	int32 GetTotalScore() const;
-	UFUNCTION(Category = "Level")
+	
+	void InitializeGameData();
+	void AddToScore(int32 Amount);
 	void AdvanceToNextLevel();
-	UFUNCTION(Category = "Level")
 	int32 GetCurrentLevelIndex() const;
 
 private:

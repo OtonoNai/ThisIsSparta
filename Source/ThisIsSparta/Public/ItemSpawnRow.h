@@ -8,8 +8,9 @@ struct THISISSPARTA_API FItemSpawnRow : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+public:
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> ItemClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere)
 	float SpawnChance = 0.0f;
 };

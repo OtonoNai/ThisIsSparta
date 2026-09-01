@@ -16,23 +16,24 @@ class THISISSPARTA_API ASpartaPlayerController : public APlayerController
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "UI")
+	void StartGame();
+	
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowGameHUD();
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	void ShowMainMenu(bool bIsRestart);
-	UFUNCTION(BlueprintCallable, Category = "UI")
-	void StartGame();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputMappingContext> InputMappingContext;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> MoveAction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> JumpAction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> LookAction;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
 
 	void BindInputActions(UEnhancedInputComponent* EnhancedInput, ASpartaCharacter* InCharacter);
