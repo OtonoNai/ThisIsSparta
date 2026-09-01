@@ -22,9 +22,9 @@ int32 USpartaGameInstance::GetTotalScore() const
 	return TotalScore;
 }
 
-void USpartaGameInstance::SetIndexToNextLevel(int32 InCurrentLevelIndex)
+void USpartaGameInstance::AdvanceToNextLevel()
 {
-	CurrentLevelIndex = InCurrentLevelIndex;
+	++CurrentLevelIndex;
 }
 
 int32 USpartaGameInstance::GetCurrentLevelIndex() const

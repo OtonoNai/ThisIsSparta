@@ -17,6 +17,18 @@ class THISISSPARTA_API ASpartaCharacter : public ACharacter
 public:
 	ASpartaCharacter();
 
+	UFUNCTION()
+	void Move(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void StartJump(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void EndJump(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void Look(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void StartSprint(const FInputActionValue& InputActionValue);
+	UFUNCTION()
+	void EndSprint(const FInputActionValue& InputActionValue);
 	UFUNCTION(Category = "Health")
 	float GetHealth() const;
 	UFUNCTION(Category = "Health")
@@ -31,38 +43,23 @@ protected:
 		AController* EventInstigator,
 		AActor* DamageCauser) override;
 
-	UFUNCTION()
-	void Move(const FInputActionValue& InputActionValue);
-	UFUNCTION()
-	void StartJump(const FInputActionValue& InputActionValue);
-	UFUNCTION()
-	void EndJump(const FInputActionValue& InputActionValue);
-	UFUNCTION()
-	void Look(const FInputActionValue& InputActionValue);
-	UFUNCTION()
-	void StartSprint(const FInputActionValue& InputActionValue);
-	UFUNCTION()
-	void EndSprint(const FInputActionValue& InputActionValue);
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<USpringArmComponent> SpringArmComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	TObjectPtr<UCameraComponent> CameraComp;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UWidgetComponent> OverheadHP;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float MaxHealth;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health")
-	float Health;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
-	float NormalSpeed;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
-	float SprintSpeedMultiplier;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed")
-	float SprintSpeed;
-
 private:
-	void UpdateOverheadHP() const;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = true))
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UCameraComponent> CameraComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWidgetComponent> OverheadHealth;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
+	float MaxHealth;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Health", meta = (AllowPrivateAccess = true))
+	float Health;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed", meta = (AllowPrivateAccess = true))
+	float NormalSpeed;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Speed", meta = (AllowPrivateAccess = true))
+	float SprintSpeedMultiplier;
+
+	void UpdateOverheadHealth() const;
 	void OnDeath();
 
 	FNumberFormattingOptions HealthUIFormat;

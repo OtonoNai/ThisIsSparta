@@ -14,16 +14,16 @@ void ACoinItem::ActivateItem(AActor* Activator)
 {
 	Super::ActivateItem(Activator);
 
-	if (Cast<ASpartaCharacter>(Activator))
+	if (!Cast<ASpartaCharacter>(Activator))
 	{
-		if (UWorld* World = GetWorld())
-		{
-			if (ASpartaGameState* GameState = World->GetGameState<ASpartaGameState>())
-			{
-				GameState->AddScore(PointValue);
-				GameState->OnCoinCollected();
-			}
-		}
-		DestroyItem();
+		return;
 	}
+
+	if (ASpartaGameState* GameState = GetWorld()->GetGameState<ASpartaGameState>())
+	{
+		GameState->AddScore(PointValue);
+		GameState->OnCoinCollected();
+	}
+
+	DestroyItem();
 }

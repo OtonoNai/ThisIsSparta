@@ -11,10 +11,8 @@
 
 ASpartaGameState::ASpartaGameState()
 {
-	Score = 0;
 	SpawnedCoinCount = 0;
 	CollectedCoinCount = 0;
-	LevelDuration = 30.0f;
 	CurrentLevelIndex = 0;
 	TimeFormat.MinimumFractionalDigits = 2;
 	TimeFormat.MaximumFractionalDigits = 2;
@@ -34,20 +32,11 @@ void ASpartaGameState::BeginPlay()
 		true);
 }
 
-int32 ASpartaGameState::GetScore() const
-{
-	return Score;
-}
-
 void ASpartaGameState::AddScore(int32 Amount)
 {
-	Score += Amount;
-	if (UGameInstance* GameInstance = GetGameInstance())
+	if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 	{
-		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
-		{
-			SpartaGameInstance->AddToScore(Amount);
-		}
+		SpartaGameInstance->AddToScore(Amount);
 	}
 }
 
@@ -63,36 +52,33 @@ void ASpartaGameState::OnCoinCollected()
 
 void ASpartaGameState::StartLevel()
 {
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	if (ASpartaPlayerController* SpartaPlayerController =
+		Cast<ASpartaPlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
-		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
-		{
-			SpartaPlayerController->ShowGameHUD();
-		}
+		SpartaPlayerController->ShowGameHUD();
 	}
 
-	if (UGameInstance* GameInstance = GetGameInstance())
+	if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 	{
-		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
-		{
-			CurrentLevelIndex = SpartaGameInstance->GetCurrentLevelIndex();
-		}
+		CurrentLevelIndex = SpartaGameInstance->GetCurrentLevelIndex();
 	}
-	
+
 	TArray<AActor*> FoundVolumes;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), FoundVolumes);
+	SpawnVolume = nullptr;
 
-	MaxWaveCount = 0;
+	WaveCount = 0;
 
 	if (FoundVolumes.Num() > 0)
 	{
-		if (ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]))
+		SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]);
+		if (SpawnVolume)
 		{
-			MaxWaveCount = SpawnVolume->GetWaveCount();
+			WaveCount = SpawnVolume->GetWaveCount();
 		}
 	}
 
-	CurrentWaveCount = 0;
+	CurrentWaveIndex = 0;
 	StartWave();
 }
 
@@ -106,19 +92,16 @@ void ASpartaGameState::EndLevel()
 {
 	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 
-	if (CurrentWaveCount + 1 < MaxWaveCount)
+	if (CurrentWaveIndex + 1 < WaveCount)
 	{
 		EndWave();
 		return;
 	}
 
-	if (UGameInstance* GameInstance = GetGameInstance())
+	if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 	{
-		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GameInstance))
-		{
-			++CurrentLevelIndex;
-			SpartaGameInstance->SetIndexToNextLevel(CurrentLevelIndex);
-		}
+		++CurrentLevelIndex;
+		SpartaGameInstance->AdvanceToNextLevel();
 	}
 
 	if (Levels.IsValidIndex(CurrentLevelIndex))
@@ -191,22 +174,12 @@ void ASpartaGameState::StartWave()
 	SpawnedCoinCount = 0;
 	CollectedCoinCount = 0;
 
-	TArray<AActor*> FoundVolumes;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), FoundVolumes);
-
-	if (FoundVolumes.IsEmpty())
-	{
-		return;
-	}
-
-	ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]);
-
 	if (!SpawnVolume)
 	{
 		return;
 	}
 
-	const int32 ItemToSpawnCount = SpawnVolume->GetWaveSpawnItemCount(CurrentWaveCount);
+	const int32 ItemToSpawnCount = SpawnVolume->GetWaveSpawnItemCount(CurrentWaveIndex);
 
 	for (int32 i = 0; i < ItemToSpawnCount; ++i)
 	{
@@ -217,20 +190,20 @@ void ASpartaGameState::StartWave()
 			++SpawnedCoinCount;
 		}
 	}
-	
+
 	if (SpawnedCoinCount == 0)
-    	{
-    		AActor* ForcedCoin = SpawnVolume->SpawnItem(ASmallCoinItem::StaticClass());
-    
-    		if (ForcedCoin)
-    		{
-    			++SpawnedCoinCount;
-    		}
-    	}
+	{
+		AActor* ForcedCoin = SpawnVolume->SpawnItem(ASmallCoinItem::StaticClass());
 
-	const int32 WaveTime = SpawnVolume->GetWaveTime(CurrentWaveCount);
+		if (ForcedCoin)
+		{
+			++SpawnedCoinCount;
+		}
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Wave %d 시작!"), CurrentWaveCount + 1);
+	const int32 WaveTime = SpawnVolume->GetWaveTime(CurrentWaveIndex);
+
+	UE_LOG(LogTemp, Warning, TEXT("Wave %d 시작!"), CurrentWaveIndex + 1);
 
 	if (GEngine)
 	{
@@ -238,7 +211,7 @@ void ASpartaGameState::StartWave()
 			-1,
 			3.0f,
 			FColor::Yellow,
-			FString::Printf(TEXT("Wave %d 시작!"), CurrentWaveCount + 1));
+			FString::Printf(TEXT("Wave %d 시작!"), CurrentWaveIndex + 1));
 	}
 
 	GetWorldTimerManager().SetTimer(
@@ -251,6 +224,6 @@ void ASpartaGameState::StartWave()
 
 void ASpartaGameState::EndWave()
 {
-	++CurrentWaveCount;
+	++CurrentWaveIndex;
 	StartWave();
 }

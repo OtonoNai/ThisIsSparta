@@ -13,8 +13,8 @@ public:
 	AHealingItem();
 
 	virtual void ActivateItem(AActor* Activator) override;
-	
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item", meta = (AllowPrivateAccess = true))
 	int32 HealAmount;
 };

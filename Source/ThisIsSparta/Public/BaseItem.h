@@ -14,7 +14,7 @@ class THISISSPARTA_API ABaseItem : public AActor, public IItemInterface
 
 public:
 	ABaseItem();
-	
+
 	UFUNCTION()
 	virtual void OnItemOverlap(
 		UPrimitiveComponent* OverlappedComponent,
@@ -29,15 +29,17 @@ public:
 		AActor* OtherActor,
 		UPrimitiveComponent* OtherComponent,
 		int32 OtherBodyIndex) override;
+
 	virtual void ActivateItem(AActor* Activator) override;
-	virtual void DestroyItem();
 	virtual FName GetItemType() const override;
+
+	virtual void DestroyItem();
 
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
-	TObjectPtr<USceneComponent> SceneComponent;
+	TObjectPtr<USceneComponent> Scene;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
-	TObjectPtr<USphereComponent> Collision;
+	TObjectPtr<USphereComponent> PickupCollision;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
@@ -46,4 +48,6 @@ protected:
 	TObjectPtr<USoundBase> PickupSound;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
 	FName ItemType;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Item")
+	float ParticleLifetime;
 };

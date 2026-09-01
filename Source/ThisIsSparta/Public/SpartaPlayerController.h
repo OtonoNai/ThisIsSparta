@@ -6,6 +6,7 @@
 
 class UInputMappingContext;
 class UInputAction;
+class ASpartaCharacter;
 
 UCLASS()
 class THISISSPARTA_API ASpartaPlayerController : public APlayerController
@@ -13,8 +14,6 @@ class THISISSPARTA_API ASpartaPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	ASpartaPlayerController();
-
 	UFUNCTION(BlueprintCallable, Category = "UI")
 	UUserWidget* GetHUDWidget() const;
 	UFUNCTION(BlueprintCallable, Category = "UI")
@@ -34,15 +33,19 @@ public:
 	TObjectPtr<UInputAction> LookAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	TObjectPtr<UInputAction> SprintAction;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<UUserWidget> HUDWidgetClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UUserWidget> HUDWidgetInstance;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
-	TSubclassOf<UUserWidget> MainMenuWidgetClass;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UUserWidget> MainMenuWidgetInstance;
+
+	void BindInputActions(UEnhancedInputComponent* EnhancedInput, ASpartaCharacter* InCharacter);
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UUserWidget> HUDWidgetInstance;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	TSubclassOf<UUserWidget> MainMenuWidgetClass;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UUserWidget> MainMenuWidgetInstance;
 };

@@ -19,7 +19,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	int32 GetTotalScore() const;
 	UFUNCTION(Category = "Level")
-	void SetIndexToNextLevel(int32 InCurrentLevelIndex);
+	void AdvanceToNextLevel();
 	UFUNCTION(Category = "Level")
 	int32 GetCurrentLevelIndex() const;
 

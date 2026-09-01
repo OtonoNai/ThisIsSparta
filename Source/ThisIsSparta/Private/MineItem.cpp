@@ -16,7 +16,7 @@ AMineItem::AMineItem()
 	ExplosionCollision = CreateDefaultSubobject<USphereComponent>(TEXT("ExplosionCollision"));
 	ExplosionCollision->InitSphereRadius(ExplosionRadius);
 	ExplosionCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	ExplosionCollision->SetupAttachment(SceneComponent);
+	ExplosionCollision->SetupAttachment(Scene);
 }
 
 void AMineItem::ActivateItem(AActor* Activator)
@@ -28,11 +28,12 @@ void AMineItem::ActivateItem(AActor* Activator)
 
 	Super::ActivateItem(Activator);
 
-	GetWorld()->GetTimerManager().SetTimer(ExplosionTimerHandle,
-	                                       this,
-	                                       &AMineItem::Explode,
-	                                       ExplosionDelay,
-	                                       false);
+	GetWorld()->GetTimerManager().SetTimer(
+		ExplosionTimerHandle,
+		this,
+		&AMineItem::Explode,
+		ExplosionDelay,
+		false);
 
 	bHasTriggered = true;
 }
@@ -46,7 +47,7 @@ void AMineItem::Explode()
 
 	for (AActor* Actor : OverlappingActors)
 	{
-		if (Actor && Cast<ASpartaCharacter>(Actor))
+		if (Cast<ASpartaCharacter>(Actor))
 		{
 			UGameplayStatics::ApplyDamage(
 				Actor,
@@ -89,7 +90,7 @@ void AMineItem::Explode()
 					WeakParticle->DestroyComponent();
 				}
 			},
-			2.0f,
+			ParticleLifetime,
 			false);
 	}
 

@@ -4,6 +4,8 @@
 #include "GameFramework/GameState.h"
 #include "SpartaGameState.generated.h"
 
+class ASpawnVolume;
+
 UCLASS()
 class THISISSPARTA_API ASpartaGameState : public AGameState
 {
@@ -12,8 +14,6 @@ class THISISSPARTA_API ASpartaGameState : public AGameState
 public:
 	ASpartaGameState();
 
-	UFUNCTION(BlueprintCallable, Category = "Score")
-	int32 GetScore() const;
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	void AddScore(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Score")
@@ -40,16 +40,17 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	TArray<TSoftObjectPtr<UWorld>> Levels;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	int32 SpawnedCoinCount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
+	float HUDUpdateInterval;
+
 	FTimerHandle LevelTimerHandle;
 	FTimerHandle HUDTimerHandle;
 	FNumberFormattingOptions TimeFormat;
-	int32 Score;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
-	int32 SpawnedCoinCount;
 	int32 CollectedCoinCount;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
-	float LevelDuration;
 	int32 CurrentLevelIndex;
-	int32 MaxWaveCount = 0;
-	int32 CurrentWaveCount = 0;
+	int32 WaveCount = 0;
+	int32 CurrentWaveIndex = 0;
+	ASpawnVolume* SpawnVolume;
 };

@@ -11,7 +11,7 @@ class THISISSPARTA_API ACoinItem : public ABaseItem
 
 public:
 	ACoinItem();
-	
+
 	virtual void ActivateItem(AActor* Activator) override;
 
 protected:

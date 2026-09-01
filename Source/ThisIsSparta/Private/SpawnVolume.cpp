@@ -7,19 +7,19 @@ ASpawnVolume::ASpawnVolume()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(Scene);
 
-	SpawnVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnVolume"));
-	SpawnVolume->SetupAttachment(Scene);
+	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnVolume"));
+	SpawnBox->SetupAttachment(Scene);
 
 	ItemDataTable = nullptr;
 }
 
 FVector ASpawnVolume::GetRandomPoint() const
 {
-	const FVector BoxExtent = SpawnVolume->GetScaledBoxExtent();
-	const FVector BoxOrigin = SpawnVolume->GetComponentLocation();
+	const FVector BoxExtent = SpawnBox->GetScaledBoxExtent();
+	const FVector BoxOrigin = SpawnBox->GetComponentLocation();
 
 	return BoxOrigin + FVector(
 		       FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
@@ -89,7 +89,7 @@ AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
 
 AActor* ASpawnVolume::SpawnRandomItem()
 {
-	if (FItemSpawnRow* SelectedRow = GetRandomItem())
+	if (FItemSpawnRow* SelectedRow = GetRandomItemRow())
 	{
 		if (UClass* ActualClass = SelectedRow->ItemClass.Get())
 		{
@@ -100,7 +100,7 @@ AActor* ASpawnVolume::SpawnRandomItem()
 	return nullptr;
 }
 
-FItemSpawnRow* ASpawnVolume::GetRandomItem() const
+FItemSpawnRow* ASpawnVolume::GetRandomItemRow() const
 {
 	if (!ItemDataTable)
 	{

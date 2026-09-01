@@ -12,18 +12,18 @@ ASpartaCharacter::ASpartaCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
-	SpringArmComp->SetupAttachment(RootComponent);
-	SpringArmComp->TargetArmLength = 300.0f;
-	SpringArmComp->bUsePawnControlRotation = true;
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	SpringArmComponent->SetupAttachment(RootComponent);
+	SpringArmComponent->TargetArmLength = 300.0f;
+	SpringArmComponent->bUsePawnControlRotation = true;
 
-	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	CameraComp->SetupAttachment(SpringArmComp, USpringArmComponent::SocketName);
-	CameraComp->bUsePawnControlRotation = false;
+	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
+	CameraComponent->bUsePawnControlRotation = false;
 
-	OverheadHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
-	OverheadHP->SetupAttachment(RootComponent);
-	OverheadHP->SetWidgetSpace(EWidgetSpace::Screen);
+	OverheadHealth = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
+	OverheadHealth->SetupAttachment(RootComponent);
+	OverheadHealth->SetWidgetSpace(EWidgetSpace::Screen);
 
 	HealthUIFormat.MinimumFractionalDigits = 0;
 	HealthUIFormat.MaximumFractionalDigits = 0;
@@ -44,67 +44,32 @@ float ASpartaCharacter::GetHealth() const
 void ASpartaCharacter::AddHealth(float Amount)
 {
 	Health = FMath::Clamp(Health + Amount, 0.0f, MaxHealth);
-	UpdateOverheadHP();
+	UpdateOverheadHealth();
 }
 
 void ASpartaCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	UpdateOverheadHP();
+	UpdateOverheadHealth();
 }
 
 void ASpartaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent);
+	if (!EnhancedInput)
 	{
-		if (ASpartaPlayerController* PlayerController = Cast<ASpartaPlayerController>(GetController()))
-		{
-			if (PlayerController->MoveAction)
-			{
-				EnhancedInput->BindAction(
-					PlayerController->MoveAction,
-					ETriggerEvent::Triggered,
-					this,
-					&ASpartaCharacter::Move);
-			}
-			if (PlayerController->JumpAction)
-			{
-				EnhancedInput->BindAction(
-					PlayerController->JumpAction,
-					ETriggerEvent::Triggered,
-					this,
-					&ASpartaCharacter::StartJump);
-				EnhancedInput->BindAction(
-					PlayerController->JumpAction,
-					ETriggerEvent::Completed,
-					this,
-					&ASpartaCharacter::EndJump);
-			}
-			if (PlayerController->LookAction)
-			{
-				EnhancedInput->BindAction(
-					PlayerController->LookAction,
-					ETriggerEvent::Triggered,
-					this,
-					&ASpartaCharacter::Look);
-			}
-			if (PlayerController->SprintAction)
-			{
-				EnhancedInput->BindAction(
-					PlayerController->SprintAction,
-					ETriggerEvent::Triggered,
-					this,
-					&ASpartaCharacter::StartSprint);
-				EnhancedInput->BindAction(
-					PlayerController->SprintAction,
-					ETriggerEvent::Completed,
-					this,
-					&ASpartaCharacter::EndSprint);
-			}
-		}
+		return;
 	}
+
+	ASpartaPlayerController* PlayerController = Cast<ASpartaPlayerController>(GetController());
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	PlayerController->BindInputActions(EnhancedInput, this);
 }
 
 float ASpartaCharacter::TakeDamage(
@@ -122,7 +87,7 @@ float ASpartaCharacter::TakeDamage(
 		OnDeath();
 	}
 
-	UpdateOverheadHP();
+	UpdateOverheadHealth();
 
 	return ActualDamage;
 }
@@ -195,14 +160,14 @@ void ASpartaCharacter::OnDeath()
 	}
 }
 
-void ASpartaCharacter::UpdateOverheadHP() const
+void ASpartaCharacter::UpdateOverheadHealth() const
 {
-	if (!OverheadHP)
+	if (!OverheadHealth)
 	{
 		return;
 	}
 
-	UUserWidget* OverheadHPInstance = OverheadHP->GetUserWidgetObject();
+	UUserWidget* OverheadHPInstance = OverheadHealth->GetUserWidgetObject();
 	if (!OverheadHPInstance)
 	{
 		return;

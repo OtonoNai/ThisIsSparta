@@ -8,17 +8,19 @@ ABaseItem::ABaseItem()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
-	SetRootComponent(SceneComponent);
+	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
+	SetRootComponent(Scene);
 
-	Collision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
-	Collision->SetupAttachment(SceneComponent);
-	Collision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
-	Collision->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnItemOverlap);
-	Collision->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnItemEndOverlap);
+	PickupCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	PickupCollision->SetupAttachment(Scene);
+	PickupCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
+	PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnItemOverlap);
+	PickupCollision->OnComponentEndOverlap.AddDynamic(this, &ABaseItem::OnItemEndOverlap);
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMesh"));
-	StaticMeshComponent->SetupAttachment(Collision);
+	StaticMeshComponent->SetupAttachment(PickupCollision);
+
+	ParticleLifetime = 2.0f;
 }
 
 void ABaseItem::OnItemOverlap(
@@ -80,7 +82,7 @@ void ABaseItem::ActivateItem(AActor* Activator)
 					WeakParticle->DestroyComponent();
 				}
 			},
-			2.0f,
+			ParticleLifetime,
 			false);
 	}
 }

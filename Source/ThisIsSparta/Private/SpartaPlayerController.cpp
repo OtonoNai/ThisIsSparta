@@ -1,14 +1,13 @@
 #include "SpartaPlayerController.h"
+
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "SpartaCharacter.h"
 #include "SpartaGameInstance.h"
 #include "SpartaGameState.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
-
-ASpartaPlayerController::ASpartaPlayerController()
-{
-}
 
 UUserWidget* ASpartaPlayerController::GetHUDWidget() const
 {
@@ -60,42 +59,56 @@ void ASpartaPlayerController::ShowMainMenu(bool bIsRestart)
 		MainMenuWidgetInstance = nullptr;
 	}
 
-	if (MainMenuWidgetClass)
+	if (!MainMenuWidgetClass)
 	{
-		MainMenuWidgetInstance = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
-		if (MainMenuWidgetInstance)
-		{
-			MainMenuWidgetInstance->AddToViewport();
-
-			bShowMouseCursor = true;
-			SetInputMode(FInputModeUIOnly());
-		}
-
-		if (UTextBlock* ButtonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName("Start")))
-		{
-			ButtonText->SetText(FText::FromString(bIsRestart ? TEXT("Restart") : TEXT("Start")));
-		}
-
-		if (bIsRestart)
-		{
-			UFunction* PlayAnimFunction = MainMenuWidgetInstance->FindFunction(FName(TEXT("PlayGameOverAnim")));
-			if (PlayAnimFunction)
-			{
-				MainMenuWidgetInstance->ProcessEvent(PlayAnimFunction, nullptr);
-			}
-
-			if (UTextBlock* TotalScoreText =
-				Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("TotalScore"))))
-			{
-				if (USpartaGameInstance* SpartaGameInstance =
-					Cast<USpartaGameInstance>(UGameplayStatics::GetGameInstance(this)))
-				{
-					TotalScoreText->SetText(
-						FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
-				}
-			}
-		}
+		return;
 	}
+
+	MainMenuWidgetInstance = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+	if (!MainMenuWidgetInstance)
+	{
+		return;
+	}
+
+	MainMenuWidgetInstance->AddToViewport();
+
+	bShowMouseCursor = true;
+	SetInputMode(FInputModeUIOnly());
+
+	UTextBlock* ButtonText = Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("Start")));
+	if (!ButtonText)
+	{
+		return;
+	}
+
+	ButtonText->SetText(FText::FromString(bIsRestart ? TEXT("Restart") : TEXT("Start")));
+
+	if (!bIsRestart)
+	{
+		return;
+	}
+
+	UFunction* PlayAnimFunction = MainMenuWidgetInstance->FindFunction(FName(TEXT("PlayGameOverAnim")));
+	if (PlayAnimFunction)
+	{
+		MainMenuWidgetInstance->ProcessEvent(PlayAnimFunction, nullptr);
+	}
+
+	UTextBlock* TotalScoreText =
+		Cast<UTextBlock>(MainMenuWidgetInstance->GetWidgetFromName(TEXT("TotalScore")));
+	if (!TotalScoreText)
+	{
+		return;
+	}
+
+	USpartaGameInstance* SpartaGameInstance = GetWorld()->GetGameInstance<USpartaGameInstance>();
+	if (!SpartaGameInstance)
+	{
+		return;
+	}
+
+	TotalScoreText->SetText(
+		FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
 }
 
 void ASpartaPlayerController::StartGame()
@@ -111,6 +124,52 @@ void ASpartaPlayerController::StartGame()
 	}
 
 	SetPause(false);
+}
+
+void ASpartaPlayerController::BindInputActions(UEnhancedInputComponent* EnhancedInput, ASpartaCharacter* InCharacter)
+{
+	if (MoveAction)
+	{
+		EnhancedInput->BindAction(
+			MoveAction,
+			ETriggerEvent::Triggered,
+			InCharacter,
+			&ASpartaCharacter::Move);
+	}
+	if (JumpAction)
+	{
+		EnhancedInput->BindAction(
+			JumpAction,
+			ETriggerEvent::Triggered,
+			InCharacter,
+			&ASpartaCharacter::StartJump);
+		EnhancedInput->BindAction(
+			JumpAction,
+			ETriggerEvent::Completed,
+			InCharacter,
+			&ASpartaCharacter::EndJump);
+	}
+	if (LookAction)
+	{
+		EnhancedInput->BindAction(
+			LookAction,
+			ETriggerEvent::Triggered,
+			InCharacter,
+			&ASpartaCharacter::Look);
+	}
+	if (SprintAction)
+	{
+		EnhancedInput->BindAction(
+			SprintAction,
+			ETriggerEvent::Triggered,
+			InCharacter,
+			&ASpartaCharacter::StartSprint);
+		EnhancedInput->BindAction(
+			SprintAction,
+			ETriggerEvent::Completed,
+			InCharacter,
+			&ASpartaCharacter::EndSprint);
+	}
 }
 
 void ASpartaPlayerController::BeginPlay()
