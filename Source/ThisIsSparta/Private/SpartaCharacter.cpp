@@ -2,13 +2,11 @@
 #include "SpartaPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "SpartaGameState.h"
-#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Kismet/GameplayStatics.h"
 
 ASpartaCharacter::ASpartaCharacter()
 {
@@ -24,14 +22,13 @@ ASpartaCharacter::ASpartaCharacter()
 	CameraComp->bUsePawnControlRotation = false;
 
 	OverheadHP = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
-	OverheadHP->SetupAttachment(GetMesh());
+	OverheadHP->SetupAttachment(RootComponent);
 	OverheadHP->SetWidgetSpace(EWidgetSpace::Screen);
 
 	HealthUIFormat.MinimumFractionalDigits = 0;
 	HealthUIFormat.MaximumFractionalDigits = 0;
 	NormalSpeed = 600.0f;
 	SprintSpeedMultiplier = 1.5f;
-	SprintSpeed = NormalSpeed * SprintSpeedMultiplier;
 
 	GetCharacterMovement()->MaxWalkSpeed = NormalSpeed;
 
@@ -116,7 +113,7 @@ float ASpartaCharacter::TakeDamage(
 	AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	const float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	Health = FMath::Clamp(Health - ActualDamage, 0.0f, MaxHealth);
 
@@ -137,7 +134,7 @@ void ASpartaCharacter::Move(const FInputActionValue& InputActionValue)
 		return;
 	}
 
-	const FVector2d MoveInput = InputActionValue.Get<FVector2d>();
+	const FVector2D MoveInput = InputActionValue.Get<FVector2D>();
 
 	if (!FMath::IsNearlyZero(MoveInput.X))
 	{
@@ -167,7 +164,7 @@ void ASpartaCharacter::EndJump(const FInputActionValue& InputActionValue)
 
 void ASpartaCharacter::Look(const FInputActionValue& InputActionValue)
 {
-	FVector2d LookInput = InputActionValue.Get<FVector2d>();
+	const FVector2D LookInput = InputActionValue.Get<FVector2D>();
 
 	AddControllerYawInput(LookInput.X);
 	AddControllerPitchInput(LookInput.Y);
@@ -177,7 +174,7 @@ void ASpartaCharacter::StartSprint(const FInputActionValue& InputActionValue)
 {
 	if (GetCharacterMovement())
 	{
-		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+		GetCharacterMovement()->MaxWalkSpeed = NormalSpeed * SprintSpeedMultiplier;
 	}
 }
 
@@ -198,13 +195,13 @@ void ASpartaCharacter::OnDeath()
 	}
 }
 
-void ASpartaCharacter::UpdateOverheadHP()
+void ASpartaCharacter::UpdateOverheadHP() const
 {
 	if (!OverheadHP)
 	{
 		return;
 	}
-	
+
 	UUserWidget* OverheadHPInstance = OverheadHP->GetUserWidgetObject();
 	if (!OverheadHPInstance)
 	{

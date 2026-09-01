@@ -16,7 +16,6 @@ ASpartaGameState::ASpartaGameState()
 	CollectedCoinCount = 0;
 	LevelDuration = 30.0f;
 	CurrentLevelIndex = 0;
-	MaxLevel = 3;
 	TimeFormat.MinimumFractionalDigits = 2;
 	TimeFormat.MaximumFractionalDigits = 2;
 }
@@ -122,12 +121,6 @@ void ASpartaGameState::EndLevel()
 		}
 	}
 
-	if (CurrentLevelIndex > MaxLevel)
-	{
-		OnGameOver();
-		return;
-	}
-
 	if (Levels.IsValidIndex(CurrentLevelIndex))
 	{
 		UGameplayStatics::OpenLevelBySoftObjectPtr(this, Levels[CurrentLevelIndex]);
@@ -152,7 +145,7 @@ void ASpartaGameState::OnGameOver()
 	}
 }
 
-void ASpartaGameState::UpdateHUDWidget()
+void ASpartaGameState::UpdateHUDWidget() const
 {
 	ASpartaPlayerController* SpartaPlayerController =
 		Cast<ASpartaPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -171,7 +164,7 @@ void ASpartaGameState::UpdateHUDWidget()
 
 	if (UTextBlock* TimeText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Time"))))
 	{
-		float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
+		const float RemainingTime = GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle);
 		TimeText->SetText(FText::Format(INVTEXT("Time : {0}"), FText::AsNumber(RemainingTime, &TimeFormat)));
 	}
 	if (UTextBlock* LevelIndexText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Level"))))

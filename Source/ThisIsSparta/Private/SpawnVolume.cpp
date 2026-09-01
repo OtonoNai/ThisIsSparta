@@ -18,8 +18,8 @@ ASpawnVolume::ASpawnVolume()
 
 FVector ASpawnVolume::GetRandomPoint() const
 {
-	FVector BoxExtent = SpawnVolume->GetScaledBoxExtent();
-	FVector BoxOrigin = SpawnVolume->GetComponentLocation();
+	const FVector BoxExtent = SpawnVolume->GetScaledBoxExtent();
+	const FVector BoxOrigin = SpawnVolume->GetComponentLocation();
 
 	return BoxOrigin + FVector(
 		       FMath::FRandRange(-BoxExtent.X, BoxExtent.X),
@@ -84,8 +84,7 @@ AActor* ASpawnVolume::SpawnItem(TSubclassOf<AActor> ItemClass)
 	return GetWorld()->SpawnActor<AActor>(
 		ItemClass,
 		GetRandomPoint(),
-		FRotator::ZeroRotator
-		);
+		FRotator::ZeroRotator);
 }
 
 AActor* ASpawnVolume::SpawnRandomItem()
@@ -130,7 +129,7 @@ FItemSpawnRow* ASpawnVolume::GetRandomItem() const
 	for (FItemSpawnRow* Row : AllRows)
 	{
 		Accumulate += Row->SpawnChance;
-		if (RandValue <= Accumulate)
+		if (RandValue < Accumulate)
 		{
 			return Row;
 		}

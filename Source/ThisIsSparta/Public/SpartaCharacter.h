@@ -7,6 +7,7 @@
 class UWidgetComponent;
 class USpringArmComponent;
 class UCameraComponent;
+struct FInputActionValue;
 
 UCLASS()
 class THISISSPARTA_API ASpartaCharacter : public ACharacter
@@ -61,7 +62,7 @@ protected:
 	float SprintSpeed;
 
 private:
-	void UpdateOverheadHP();
+	void UpdateOverheadHP() const;
 	void OnDeath();
 
 	FNumberFormattingOptions HealthUIFormat;

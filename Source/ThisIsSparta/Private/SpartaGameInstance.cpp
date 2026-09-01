@@ -17,7 +17,7 @@ void USpartaGameInstance::AddToScore(int32 Amount)
 	TotalScore += Amount;
 }
 
-int32 USpartaGameInstance::GetTotalScore()
+int32 USpartaGameInstance::GetTotalScore() const
 {
 	return TotalScore;
 }
@@ -27,7 +27,7 @@ void USpartaGameInstance::SetIndexToNextLevel(int32 InCurrentLevelIndex)
 	CurrentLevelIndex = InCurrentLevelIndex;
 }
 
-int32 USpartaGameInstance::GetCurrentLevelIndex()
+int32 USpartaGameInstance::GetCurrentLevelIndex() const
 {
 	return CurrentLevelIndex;
 }

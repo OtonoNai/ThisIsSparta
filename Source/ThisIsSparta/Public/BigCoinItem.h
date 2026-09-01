@@ -8,9 +8,9 @@ UCLASS()
 class THISISSPARTA_API ABigCoinItem : public ACoinItem
 {
 	GENERATED_BODY()
-	
-	public:
+
+public:
 	ABigCoinItem();
-	
+
 	virtual void ActivateItem(AActor* Activator) override;
 };

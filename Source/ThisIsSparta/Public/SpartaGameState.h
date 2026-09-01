@@ -27,7 +27,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	void OnGameOver();
 	UFUNCTION(BlueprintCallable, Category = "Level")
-	void UpdateHUDWidget();
+	void UpdateHUDWidget() const;
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	TSoftObjectPtr<UWorld> GetFirstLevel() const;
 
@@ -50,7 +50,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	float LevelDuration;
 	int32 CurrentLevelIndex;
-	int32 MaxLevel;
 	int32 MaxWaveCount = 0;
 	int32 CurrentWaveCount = 0;
 };

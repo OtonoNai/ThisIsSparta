@@ -7,11 +7,6 @@
 #include "Kismet/GameplayStatics.h"
 
 ASpartaPlayerController::ASpartaPlayerController()
-	: InputMappingContext(nullptr),
-	  MoveAction(nullptr),
-	  JumpAction(nullptr),
-	  LookAction(nullptr),
-	  SprintAction(nullptr)
 {
 }
 
@@ -131,7 +126,7 @@ void ASpartaPlayerController::BeginPlay()
 		}
 	}
 
-	FString CurrentMapName = GetWorld()->GetMapName();
+	const FString CurrentMapName = GetWorld()->GetMapName();
 	if (CurrentMapName.Contains(TEXT("MenuLevel")))
 	{
 		ShowMainMenu(false);

@@ -17,11 +17,11 @@ public:
 	UFUNCTION(Category = "Level")
 	void AddToScore(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Level")
-	int32 GetTotalScore();
+	int32 GetTotalScore() const;
 	UFUNCTION(Category = "Level")
 	void SetIndexToNextLevel(int32 InCurrentLevelIndex);
 	UFUNCTION(Category = "Level")
-	int32 GetCurrentLevelIndex();
+	int32 GetCurrentLevelIndex() const;
 
 private:
 	int32 TotalScore;
