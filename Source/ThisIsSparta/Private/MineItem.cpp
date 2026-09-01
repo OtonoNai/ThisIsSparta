@@ -12,6 +12,7 @@ AMineItem::AMineItem()
 	ExplosionRadius = 300.0f;
 	ExplosionDamage = 40;
 	bHasTriggered = false;
+	ParticleLifetime = 4.0f;
 
 	ExplosionCollision = CreateDefaultSubobject<USphereComponent>(TEXT("ExplosionCollision"));
 	ExplosionCollision->InitSphereRadius(ExplosionRadius);

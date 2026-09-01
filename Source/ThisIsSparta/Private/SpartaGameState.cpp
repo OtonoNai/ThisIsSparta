@@ -28,11 +28,11 @@ void ASpartaGameState::BeginPlay()
 		HUDTimerHandle,
 		this,
 		&ASpartaGameState::UpdateHUDWidget,
-		0.05f,
+		HUDUpdateInterval,
 		true);
 }
 
-void ASpartaGameState::AddScore(int32 Amount)
+void ASpartaGameState::ReportScoreGained(int32 Amount)
 {
 	if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 	{
@@ -118,13 +118,11 @@ void ASpartaGameState::OnGameOver()
 {
 	GetWorldTimerManager().ClearTimer(HUDTimerHandle);
 
-	if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+	if (ASpartaPlayerController* SpartaPlayerController
+		= GetWorld()->GetFirstPlayerController<ASpartaPlayerController>())
 	{
-		if (ASpartaPlayerController* SpartaPlayerController = Cast<ASpartaPlayerController>(PlayerController))
-		{
-			SpartaPlayerController->SetPause(true);
-			SpartaPlayerController->ShowMainMenu(true);
-		}
+		SpartaPlayerController->SetPause(true);
+		SpartaPlayerController->ShowMainMenu(true);
 	}
 }
 
@@ -156,7 +154,7 @@ void ASpartaGameState::UpdateHUDWidget() const
 	}
 	if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Score"))))
 	{
-		if (USpartaGameInstance* SpartaGameInstance = Cast<USpartaGameInstance>(GetGameInstance()))
+		if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 		{
 			ScoreText->SetText(
 				FText::Format(INVTEXT("Score : {0}"), SpartaGameInstance->GetTotalScore()));
@@ -174,7 +172,7 @@ void ASpartaGameState::StartWave()
 	SpawnedCoinCount = 0;
 	CollectedCoinCount = 0;
 
-	if (!SpawnVolume)
+	if (!IsValid(SpawnVolume))
 	{
 		return;
 	}
@@ -225,5 +223,12 @@ void ASpartaGameState::StartWave()
 void ASpartaGameState::EndWave()
 {
 	++CurrentWaveIndex;
-	StartWave();
+
+	FTimerHandle NextWaveHandle;
+	GetWorldTimerManager().SetTimer(
+		NextWaveHandle,
+		this,
+		&ASpartaGameState::StartWave,
+		0.01f,
+		false);
 }

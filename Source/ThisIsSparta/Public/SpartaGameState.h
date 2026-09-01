@@ -15,7 +15,7 @@ public:
 	ASpartaGameState();
 
 	UFUNCTION(BlueprintCallable, Category = "Score")
-	void AddScore(int32 Amount);
+	void ReportScoreGained(int32 Amount);
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	void OnCoinCollected();
 	UFUNCTION(BlueprintCallable, Category = "Level")
@@ -26,7 +26,7 @@ public:
 	void EndLevel();
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	void OnGameOver();
-	UFUNCTION(BlueprintCallable, Category = "Level")
+	UFUNCTION(BlueprintCallable, Category = "UI")
 	void UpdateHUDWidget() const;
 	UFUNCTION(BlueprintCallable, Category = "Level")
 	TSoftObjectPtr<UWorld> GetFirstLevel() const;
@@ -40,10 +40,12 @@ protected:
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	TArray<TSoftObjectPtr<UWorld>> Levels;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
+	TObjectPtr<ASpawnVolume> SpawnVolume;
+	UPROPERTY(BlueprintReadOnly, Category = "Level", meta=(AllowPrivateAccess = "true"))
 	int32 SpawnedCoinCount;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta=(AllowPrivateAccess="true"))
-	float HUDUpdateInterval;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI", meta=(AllowPrivateAccess="true"))
+	float HUDUpdateInterval = 0.05f;
 
 	FTimerHandle LevelTimerHandle;
 	FTimerHandle HUDTimerHandle;
@@ -52,5 +54,4 @@ private:
 	int32 CurrentLevelIndex;
 	int32 WaveCount = 0;
 	int32 CurrentWaveIndex = 0;
-	ASpawnVolume* SpawnVolume;
 };

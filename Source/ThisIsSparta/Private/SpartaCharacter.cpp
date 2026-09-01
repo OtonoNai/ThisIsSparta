@@ -21,7 +21,7 @@ ASpartaCharacter::ASpartaCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent, USpringArmComponent::SocketName);
 	CameraComponent->bUsePawnControlRotation = false;
 
-	OverheadHealth = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHP"));
+	OverheadHealth = CreateDefaultSubobject<UWidgetComponent>(TEXT("OverheadHealth"));
 	OverheadHealth->SetupAttachment(RootComponent);
 	OverheadHealth->SetWidgetSpace(EWidgetSpace::Screen);
 

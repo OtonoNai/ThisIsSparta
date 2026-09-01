@@ -7,6 +7,7 @@
 class UInputMappingContext;
 class UInputAction;
 class ASpartaCharacter;
+class UEnhancedInputComponent;
 
 UCLASS()
 class THISISSPARTA_API ASpartaPlayerController : public APlayerController

@@ -10,7 +10,7 @@ ASpawnVolume::ASpawnVolume()
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(Scene);
 
-	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnVolume"));
+	SpawnBox = CreateDefaultSubobject<UBoxComponent>(TEXT("SpawnBox"));
 	SpawnBox->SetupAttachment(Scene);
 
 	ItemDataTable = nullptr;
@@ -18,6 +18,11 @@ ASpawnVolume::ASpawnVolume()
 
 FVector ASpawnVolume::GetRandomPoint() const
 {
+	if (!SpawnBox)
+	{
+		return GetActorLocation();
+	}
+	
 	const FVector BoxExtent = SpawnBox->GetScaledBoxExtent();
 	const FVector BoxOrigin = SpawnBox->GetComponentLocation();
 
@@ -119,15 +124,22 @@ FItemSpawnRow* ASpawnVolume::GetRandomItemRow() const
 	float TotalChance = 0.0f;
 	for (const FItemSpawnRow* Row : AllRows)
 	{
-		if (Row)
+		if (!Row)
 		{
-			TotalChance += Row->SpawnChance;
+			continue;
 		}
+
+		TotalChance += Row->SpawnChance;
 	}
 	const float RandValue = FMath::FRandRange(0.0f, TotalChance);
 	float Accumulate = 0.0f;
 	for (FItemSpawnRow* Row : AllRows)
 	{
+		if (!Row)
+		{
+			continue;
+		}
+
 		Accumulate += Row->SpawnChance;
 		if (RandValue < Accumulate)
 		{

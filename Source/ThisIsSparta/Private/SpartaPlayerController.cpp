@@ -27,21 +27,23 @@ void ASpartaPlayerController::ShowGameHUD()
 		MainMenuWidgetInstance = nullptr;
 	}
 
-	if (HUDWidgetClass)
+	if (!HUDWidgetClass)
 	{
-		HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
-		if (HUDWidgetInstance)
-		{
-			HUDWidgetInstance->AddToViewport();
+		return;
+	}
+	
+	HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+	if (HUDWidgetInstance)
+	{
+		HUDWidgetInstance->AddToViewport();
 
-			bShowMouseCursor = false;
-			SetInputMode(FInputModeGameOnly());
-		}
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
+	}
 
-		if (ASpartaGameState* SpartaGameState = GetWorld()->GetGameState<ASpartaGameState>())
-		{
-			SpartaGameState->UpdateHUDWidget();
-		}
+	if (ASpartaGameState* SpartaGameState = GetWorld()->GetGameState<ASpartaGameState>())
+	{
+		SpartaGameState->UpdateHUDWidget();
 	}
 }
 
@@ -113,7 +115,7 @@ void ASpartaPlayerController::ShowMainMenu(bool bIsRestart)
 
 void ASpartaPlayerController::StartGame()
 {
-	if (USpartaGameInstance* SpartaGameInstance = GetWorld()->GetGameInstance<USpartaGameInstance>())
+	if (USpartaGameInstance* SpartaGameInstance = GetGameInstance<USpartaGameInstance>())
 	{
 		SpartaGameInstance->InitializeGameData();
 	}

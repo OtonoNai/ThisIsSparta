@@ -11,7 +11,7 @@ ABaseItem::ABaseItem()
 	Scene = CreateDefaultSubobject<USceneComponent>(TEXT("Scene"));
 	SetRootComponent(Scene);
 
-	PickupCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	PickupCollision = CreateDefaultSubobject<USphereComponent>(TEXT("PickupCollision"));
 	PickupCollision->SetupAttachment(Scene);
 	PickupCollision->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	PickupCollision->OnComponentBeginOverlap.AddDynamic(this, &ABaseItem::OnItemOverlap);
